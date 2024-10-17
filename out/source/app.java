@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 
-public class mad extends PApplet {
+public class app extends PApplet {
 
 public void setup()
 {
@@ -22,14 +22,14 @@ public void setup()
 
 public void draw()
 {
-    background(255,0,0);
+    background(128,0,0);
 }
 
 
   public void settings() { size(800, 600); }
 
   static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "mad" };
+    String[] appletArgs = new String[] { "app" };
     if (passedArgs != null) {
       PApplet.main(concat(appletArgs, passedArgs));
     } else {
