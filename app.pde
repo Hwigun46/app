@@ -1,53 +1,48 @@
 int scrollY = 0;  // 스크롤 위치
 int screenHeight = 874;  // 아이폰 화면 크기
-int contentHeight = 1228; // 전체 컨텐츠 길이
+int contentHeight = 1461; // 전체 컨텐츠 길이
 
-CalendarWidget calendarWidget;
-CallWidget callWidget;
-WeatherWidget weatherWidget;
-CheckListWidget checkListWidget;
-BatteryWidget batteryWidget;
-StockWidget stockWidget;
+CalendarWidget calendarWidget;  // CalendarWidget 인스턴스
+VitalCheckWidget vitalCheckWidget;  // VitalCheckWidget 인스턴스
+ChecklistWidget checklistWidget; // ChecklistWidget 인스턴스
+WalletWidget walletWidget;  // WalletWidget 인스턴스
+PFont font; // 공통 폰트
 
-
-PFont font;
-
-void settings(){
-  size(402, screenHeight);
+void settings() {
+  size(402, screenHeight);  // 화면 크기 설정
 }
 
 void setup() {
-  // TrueType 폰트(.ttf) 파일을 로드
-  font = createFont("font/d2coding.ttf", 32);  // 32는 폰트 크기
+  font = createFont("font/d2coding.ttf", 14);  // 공통 폰트 설정
   textFont(font);  // 기본 폰트로 설정
 
-  // 위젯 인스턴스 생성, Y 좌표를 명확히 설정
-  calendarWidget = new CalendarWidget(0);        // Y 좌표 0부터 시작
-  callWidget = new CallWidget(400);              // Y 좌표 400부터 시작
-  weatherWidget = new WeatherWidget(500);        // Y 좌표 500
-  checkListWidget = new CheckListWidget(650);    // Y 좌표 650
-  batteryWidget = new BatteryWidget(850);         // Y 좌표 850
-  stockWidget = new StockWidget(1050);            // Y 좌표 1050
-
+  calendarWidget = new CalendarWidget(32, 70);  // 캘린더 위치
+  vitalCheckWidget = new VitalCheckWidget(32, 593, font);  // VitalCheck 위치 및 폰트 전달
+  checklistWidget = new ChecklistWidget(32, 881); // Checklist 위치
+  walletWidget = new WalletWidget(32, 1233); // Wallet 위치
 }
 
 void draw() {
-  background(240);
-  translate(0, -scrollY);  // 스크롤 기능
+  background(240);  // 배경 색상
+  translate(0, -scrollY);  // 스크롤
 
-  // 각 위젯을 출력
+  // 각 위젯 그리기
   calendarWidget.display();
-  callWidget.display();
-  weatherWidget.display();
-  checkListWidget.display();
-  batteryWidget.display();
-  stockWidget.display();
+  vitalCheckWidget.display();
+  checklistWidget.display();
+  walletWidget.display(); // Wallet 위젯 출력
 }
 
 // 마우스 드래그로 스크롤 이동
 void mouseDragged() {
-  int scrollSpeed = 2;  // 이동 속도 설정
-  scrollY += (mouseY - pmouseY) * scrollSpeed; // 이동량에 스크롤 속도를 곱함
-  scrollY = constrain(scrollY, 0, contentHeight - screenHeight); // 스크롤 범위 제한
+  int scrollSpeed = 2;  // 스크롤 속도
+  scrollY += (mouseY - pmouseY) * scrollSpeed;  // 이동량 계산
+  scrollY = constrain(scrollY, 0, contentHeight - screenHeight);  // 범위 제한
 }
 
+// 마우스 클릭 이벤트 처리
+void mousePressed() {
+  calendarWidget.toggleButtons(mouseX, mouseY, scrollY);
+  calendarWidget.handleArrows(mouseX, mouseY, scrollY);
+  checklistWidget.handleMousePress(mouseX, mouseY, scrollY);
+}
