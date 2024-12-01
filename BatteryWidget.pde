@@ -35,7 +35,7 @@ class BatteryWidget {
 
   void display() {
     
-    tint(255,30);
+    tint(255,180);
     // 배경 이미지 출력
     image(batground, x, y, 158, 158);
     noTint();

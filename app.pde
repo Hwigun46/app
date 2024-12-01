@@ -2,6 +2,9 @@ int scrollY = 0;  // 스크롤 위치
 int screenHeight = 874;  // 아이폰 화면 크기
 int contentHeight = 1461; // 전체 컨텐츠 길이
 
+PImage backgroundImage;
+PImage statusBar;
+
 CalendarWidget calendarWidget;  // CalendarWidget 인스턴스
 VitalCheckWidget vitalCheckWidget;  // VitalCheckWidget 인스턴스
 ChecklistWidget checklistWidget; // ChecklistWidget 인스턴스
@@ -11,6 +14,8 @@ PFont font; // 공통 폰트
 
 void settings() {
   size(402, screenHeight);  // 화면 크기 설정
+  backgroundImage = loadImage("data/image/blurScreen.png");
+  statusBar = loadImage("data/image/statusbar.png");
 }
 
 void setup() {
@@ -25,9 +30,12 @@ void setup() {
 }
 
 void draw() {
-  background(240);  // 배경 색상
+  
+  image(backgroundImage,0,0,402,874);
+  
   translate(0, -scrollY);  // 스크롤
 
+  image(statusBar,0,0,402,90);
   // 각 위젯 그리기
   calendarWidget.display();
   vitalCheckWidget.display();
