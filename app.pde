@@ -6,6 +6,7 @@ CalendarWidget calendarWidget;  // CalendarWidget 인스턴스
 VitalCheckWidget vitalCheckWidget;  // VitalCheckWidget 인스턴스
 ChecklistWidget checklistWidget; // ChecklistWidget 인스턴스
 WalletWidget walletWidget;  // WalletWidget 인스턴스
+BatteryWidget batteryWidget;  // BatteryWidget 인스턴스
 PFont font; // 공통 폰트
 
 void settings() {
@@ -20,6 +21,7 @@ void setup() {
   vitalCheckWidget = new VitalCheckWidget(32, 593, font);  // VitalCheck 위치 및 폰트 전달
   checklistWidget = new ChecklistWidget(32, 881); // Checklist 위치
   walletWidget = new WalletWidget(32, 1233); // Wallet 위치
+  batteryWidget = new BatteryWidget(32, 1058); // BatteryWidget 위치
 }
 
 void draw() {
@@ -30,13 +32,14 @@ void draw() {
   calendarWidget.display();
   vitalCheckWidget.display();
   checklistWidget.display();
-  walletWidget.display(); // Wallet 위젯 출력
+  walletWidget.display();
+  batteryWidget.display(); // Battery 위젯 출력
 }
 
 // 마우스 드래그로 스크롤 이동
 void mouseDragged() {
   int scrollSpeed = 2;  // 스크롤 속도
-  scrollY += (mouseY - pmouseY) * scrollSpeed;  // 이동량 계산
+  scrollY -= (mouseY - pmouseY) * scrollSpeed;  // 이동량 계산 (반전)
   scrollY = constrain(scrollY, 0, contentHeight - screenHeight);  // 범위 제한
 }
 
@@ -45,4 +48,5 @@ void mousePressed() {
   calendarWidget.toggleButtons(mouseX, mouseY, scrollY);
   calendarWidget.handleArrows(mouseX, mouseY, scrollY);
   checklistWidget.handleMousePress(mouseX, mouseY, scrollY);
+  batteryWidget.handleClick(mouseX, mouseY + scrollY); // 스크롤 보정하여 클릭 처리
 }
