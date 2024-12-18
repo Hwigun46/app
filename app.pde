@@ -29,7 +29,7 @@ WeatherWidget weatherWidget;
 StockWidget stockWidget;
 
 // API 인증키
-String apiKey = "";
+String apiKey = "%2BrYEn1ETgl%2BXi79LFibROdqGXYbWZUH1p4ryFUEuRA%2Bb4fQkvQuv8aMBcDda2UgFQOfPaaFe%2F2tOPgUBUUDDvw%3D%3D";
 
 void settings() {
   size(402, screenHeight);
