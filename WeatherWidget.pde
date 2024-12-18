@@ -96,7 +96,7 @@ class WeatherWidget {
     text(city, x + 27, y + 22);
 
     // 현재 기온 출력
-    textSize(43);
+    textSize(40);
     text(temp, x + 34, y + 60);
 
     // 날씨 상태 출력 (Sunny)
@@ -104,7 +104,7 @@ class WeatherWidget {
     text(weatherview, x + 125, y + 55);
 
     // 최고/최저 기온 출력
-    textSize(14);
+    textSize(13);
     text("H:" + highTemp + " L:" + lowTemp, x + 110, y + 76);
   }  
 }
