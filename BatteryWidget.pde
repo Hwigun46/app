@@ -19,7 +19,7 @@ class BatteryWidget {
     iconPositionsY = new float[]{y + 26, y + 26, y + 98, y + 98}; // 첫 행, 두 번째 행 Y 위치
 
     // 이미지 로드
-    batground = loadImage("data/image/battery_background.png");
+    batground = loadImage("data/image/widget_background.png");
     icons[0] = loadImage("data/image/phone.png");
     icons[1] = loadImage("data/image/airpod.png");
     icons[2] = loadImage("data/image/applewatch.png");

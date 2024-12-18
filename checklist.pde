@@ -23,7 +23,7 @@ class ChecklistWidget {
 
   void display() {
     // 체크리스트 배경 이미지 출력
-    image(checklistBg, x, y, 338, 158); // 배경 크기는 적절히 조정
+    image(checklistBg, x, y, 338, 158); // 배경 크기 피그마 값
 
     // 체크된 항목 출력
     for (int i = 0; i < 4; i++) {
