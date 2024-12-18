@@ -154,76 +154,79 @@ void parseWeatherData(String data) {
                               .getJSONObject("items")
                               .getJSONArray("item");
 
-        String weather = "CLEAR";
-        String weatherview = "CLEAR";
+        // 초기값 설정
+        String weather = "N/A";
+        String weatherview = "N/A";
         String currentTemp = "N/A";
         double maxTemp = Double.MIN_VALUE; // 최고 기온 초기값
         double minTemp = Double.MAX_VALUE; // 최저 기온 초기값
 
         int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); // 현재 시간
-        String nearestTemp = null;
-        String nearestTime = null;
+        String nearestTemp = null; // 현재 시간과 가장 가까운 기온 데이터
 
-        // 기상 데이터를 순회하면서 필요한 정보를 추출
+        // 데이터 순회
         for (int i = 0; i < items.length(); i++) {
             JSONObject item = items.getJSONObject(i);
             String category = item.getString("category");
-            String fcstTime = item.getString("fcstTime"); // 예보 시간 (예: "0300")
-            String fcstValue = item.getString("fcstValue"); // 예보 값 (기온 값 등)
+            String fcstValue = item.getString("fcstValue");
+            String fcstTime = item.getString("fcstTime");
 
-            switch (category) {
-                case "TMP": // 기온 (단기 예보 API에서는 "TMP" 사용)
-                    // 예보 시간이 현재 시간과 가장 가까운 시간을 찾음
-                    int fcstHour = Integer.parseInt(fcstTime.substring(0, 2)); // "0300" -> 3
-                    int timeDiff = Math.abs(currentHour - fcstHour); // 시간 차이 계산
-
-                    // 가장 가까운 시간을 찾는 로직
-                    if (nearestTime == null || timeDiff < Math.abs(currentHour - Integer.parseInt(nearestTime.substring(0, 2)))) {
-                        nearestTime = fcstTime;
-                        nearestTemp = fcstValue;
-                    }
-
-                    // 최고/최저 기온 계산 (하루 중 가장 높은 기온과 낮은 기온)
+            // TMP 또는 TMX 데이터만 처리
+            if (category.equals("TMP") || category.equals("TMX")) {
+                try {
                     double temp = Double.parseDouble(fcstValue);
-                    maxTemp = Math.max(maxTemp, temp); // 최대 기온
-                    minTemp = Math.min(minTemp, temp); // 최소 기온
-                    break;
 
-                case "SKY": // 하늘 상태
-                    if (fcstValue.equals("1")) weatherview = "맑음";
-                    else if (fcstValue.equals("3")) weatherview = "구름많음";
-                    else if (fcstValue.equals("4")) weatherview = "흐림";
-                    break;
+                    // 현실적인 기온 범위(-50°C ~ 50°C) 내 데이터만 처리
+                    if (temp >= -50 && temp <= 50) {
+                        // 최고/최저 기온 계산
+                        maxTemp = Math.max(maxTemp, temp);
+                        minTemp = Math.min(minTemp, temp);
 
-                case "PTY": // 강수 상태
-                    if (fcstValue.equals("0")) weather = "강수없음";
-                    else if (fcstValue.equals("1")) weather = "비";
-                    else if (fcstValue.equals("2")) weather = "비/눈";
-                    else if (fcstValue.equals("3")) weather = "눈";
-                    break;
+                        // 현재 시간과 가장 가까운 시간의 기온
+                        int fcstHour = Integer.parseInt(fcstTime.substring(0, 2)); // "1200" -> 12
+                        if (nearestTemp == null || Math.abs(currentHour - fcstHour) < Math.abs(currentHour - Integer.parseInt(nearestTemp))) {
+                            nearestTemp = fcstValue;
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    println("Invalid temperature value: " + fcstValue);
+                }
+            }
+
+            // SKY 데이터 처리
+            if (category.equals("SKY")) {
+                if (fcstValue.equals("1")) weatherview = "맑음";
+                else if (fcstValue.equals("3")) weatherview = "구름많음";
+                else if (fcstValue.equals("4")) weatherview = "흐림";
+            }
+
+            // PTY 데이터 처리
+            if (category.equals("PTY")) {
+                if (fcstValue.equals("0")) weather = "강수없음";
+                else if (fcstValue.equals("1")) weather = "비";
+                else if (fcstValue.equals("2")) weather = "비/눈";
+                else if (fcstValue.equals("3")) weather = "눈";
             }
         }
 
-        // 가장 가까운 시간의 기온을 현재 기온으로 설정
-        currentTemp = (nearestTemp != null) ? nearestTemp + "°" : "N/A";
-
-        // 최고 기온과 최저 기온이 초기값이면 "N/A"로 처리
-        String maxTempStr = (maxTemp == Double.MIN_VALUE) ? "N/A" : maxTemp + "°";
-        String minTempStr = (minTemp == Double.MAX_VALUE) ? "N/A" : minTemp + "°";
+        // 최고 기온과 최저 기온 형식화
+        String maxTempStr = maxTemp == Double.MIN_VALUE ? "N/A" : maxTemp + "°";
+        String minTempStr = minTemp == Double.MAX_VALUE ? "N/A" : minTemp + "°";
+        String nearestTempStr = nearestTemp != null ? Math.round(Double.parseDouble(nearestTemp)) + "°" : "N/A";
 
         // WeatherWidget 업데이트
         weatherWidget.updateWeather(
-            weather,
-            weatherview,
-            currentTemp,
-            maxTempStr,
-            minTempStr
+            weather,          // 날씨 상태
+            weatherview,      // 하늘 상태
+            nearestTempStr,   // 현재 기온
+            maxTempStr,       // 최고 기온
+            minTempStr        // 최저 기온
         );
 
         // 디버깅 출력
         println("Weather: " + weather);
         println("Weatherview: " + weatherview);
-        println("Current Temp: " + currentTemp);
+        println("Current Temp: " + nearestTempStr);
         println("Max Temp: " + maxTempStr);
         println("Min Temp: " + minTempStr);
     } catch (Exception e) {
